@@ -13,15 +13,21 @@ export class SavePinArea extends Component {
             <View style={container}>
                 <TextInputArea placeholder="Marker adı giriniz." value=""></TextInputArea>
                 <ButtonArea buttonText="Kaydet!" onPressFunction={() => {
-                    this.props.MapStore.addTemporaryMarkerToCollection(this.props.MapStore.temporaryMarker)
+
+                    // ------toAddWithoutDbLocal-----
+                    //this.props.MapStore.addTemporaryMarkerToCollection(this.props.MapStore.temporaryMarker)
+                    // ------/toAddWithoutDbLocal-----
+
+                    this.props.MapStore.saveMarkerToUser(this.props.MapStore.temporaryMarker)
                     Keyboard.dismiss();
 
 
-                    // TODO do it function in mapstore same in MapScreen
+                    // TODO refactor it to a function, in mapstore same in MapScreen.js
                     if (this.props.MapStore.markerSet || !this.props.MapStore.markerSet) {
                         this.props.MapStore.changeMarkerSet(!this.props.MapStore.markerSet);
                     }
-                }}></ButtonArea>
+                }}>
+                </ButtonArea>
             </View>
         )
     }

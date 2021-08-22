@@ -1,10 +1,11 @@
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
 import { Text, View, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
-import MarkerInfo from '../utils/MarkerInfo';
 import AppStyles from '../../styles/AppStyles'
 import { ScreenName } from '../../constants/Enums';
-import ChangePasswordArea from '../utils/ChangePasswordArea';
+import EditProfileArea from '../utils/EditProfileArea';
+import ButtonArea from '../utils/ButtonArea';
+import FirebaseUtil from '../utils/FirebaseUtil'
 
 const {
     WINDOW_WIDTH,
@@ -12,12 +13,26 @@ const {
     BACKGROUND_COLOR
 } = AppStyles;
 
-@inject('MapStore')
+@inject('ProfileStore', 'MapStore')
 @observer
 export class ProfileScreen extends Component {
 
     constructor(props) {
         super(props)
+        this.signOut = this.signOut.bind(this)
+        this.getData = this.getData.bind(this)
+    }
+
+    componentDidMount() {
+        this.props.ProfileStore.getCurrentUser();
+    }
+
+    signOut() {
+        FirebaseUtil.signOut();
+    }
+
+    getData() {
+        this.props.MapStore.getMarkersByUserId();
     }
 
     render() {
@@ -28,12 +43,23 @@ export class ProfileScreen extends Component {
             <SafeAreaView style={container}>
                 <View style={pinHeader}>
                     <Text style={pinText}>
-                        Profil
+                        Profile
                     </Text>
                 </View>
-                <ChangePasswordArea>
-                    
-                </ChangePasswordArea>
+
+                <EditProfileArea>
+
+                </EditProfileArea>
+
+                <ButtonArea buttonText="data" onPressFunction={() => {
+                    this.getData();
+                    // this.props.navigation.navigate(ScreenName.LOGIN)
+                }} />
+
+                <ButtonArea buttonText="LOGOUT" onPressFunction={() => {
+                    this.signOut();
+                    // this.props.navigation.navigate(ScreenName.LOGIN)
+                }} />
             </SafeAreaView>
         )
     }
@@ -61,7 +87,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     pinText: {
-        fontSize: 28,
+        fontSize: 32,
         color: 'white',
         fontWeight: 'bold'
     }

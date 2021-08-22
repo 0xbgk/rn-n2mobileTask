@@ -1,4 +1,7 @@
 export const ScreenName = {
+    SIGNIN: 'SignIn',
+    SIGNUP: 'SignUp',
+    HOME: 'Home',
     MAP: 'Map',
     PROFILE: 'Profile',
     PINS: 'Pins'

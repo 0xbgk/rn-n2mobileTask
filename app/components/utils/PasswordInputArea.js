@@ -24,12 +24,11 @@ export default class PasswordInputArea extends Component {
     state = {
         password: ""
     }
+    
     setText(text) {
         this.setState({
             password: text
         });
-
-
     }
 
     render() {

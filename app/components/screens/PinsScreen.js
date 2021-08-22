@@ -8,7 +8,9 @@ import { ScreenName } from '../../constants/Enums';
 const {
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    BACKGROUND_COLOR
+    BACKGROUND_COLOR,
+    BUTTON_ORANGE_COLOR,
+    ORANGE_COLOR_FULL
 } = AppStyles;
 
 @inject('MapStore')
@@ -19,6 +21,14 @@ export class PinsScreen extends Component {
         super(props)
     }
 
+    state = {
+        viewMarkers: false
+    }
+
+    componentDidMount() {
+        this.props.MapStore.getMarkersByUserId();
+    }
+
     render() {
 
         const { container, pinContainer, pinHeader, pinText } = styles;
@@ -27,28 +37,37 @@ export class PinsScreen extends Component {
             <SafeAreaView style={container}>
                 <View style={pinHeader}>
                     <Text style={pinText}>
-                        Pinlerim
+                        My Pins
                     </Text>
                 </View>
                 <ScrollView style={pinContainer}>
                     {
-                        this.props.MapStore.markers.map((marker) => {
-                            return (
-                                <MarkerInfo key={marker.id} id={marker.id} title={marker.title} navigateToMarker={() => {
+                        this.state.viewMarkers ?
+                            this.props.MapStore.markers.map((marker) => {
+                                return (
+                                    <MarkerInfo key={marker.id} id={marker.id} title={marker.title} navigateToMarker={() => {
 
-                                    this.props.MapStore.setPin(marker.latlng)
+                                        this.props.MapStore.setPin(marker.latlng)
 
-                                    // console.log(this.props.MapStore.region)
-                                    
-                                    this.props.navigation.navigate(ScreenName.MAP)
+                                        // console.log(this.props.MapStore.region)
 
-                                }}></MarkerInfo>
+                                        this.props.navigation.navigate(ScreenName.MAP)
 
-                            )
-                        })
+                                    }}></MarkerInfo>
+
+                                )
+                            }) :
+                            <View style={{
+                                flex: 1, justifyContent: 'center',
+                                alignContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: ORANGE_COLOR_FULL }}>You have no pins yet!</Text>
+                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: BUTTON_ORANGE_COLOR, paddingTop: 10 }}>Tap on Map to add one!</Text>
+                            </View>
                     }
                 </ScrollView>
-            </SafeAreaView>
+            </SafeAreaView >
         )
     }
 }
@@ -75,7 +94,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     pinText: {
-        fontSize: 28,
+        fontSize: 32,
         color: 'white',
         fontWeight: 'bold'
     }

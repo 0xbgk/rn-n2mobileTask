@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import { inject, observer } from 'mobx-react'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { CoordinateDelta } from '../../constants/Enums';
 import MyLocationButton from '../utils/MyLocationButton';
 import SavePinArea from '../utils/SavePinArea';
 import Geolocation from 'react-native-geolocation-service';
+import Permissions from 'react-native-permissions';
 
 @inject('MapStore')
 @observer
@@ -24,10 +25,22 @@ export class MapScreen extends Component {
             longitude: this.props.MapStore.region.longitude,
             latitudeDelta: CoordinateDelta.TOWN_LATITUDE,
             longitudeDelta: CoordinateDelta.TOWN_LONGTITUDE,
-        },
-        renderer: true
+        }
     };
 
+    componentDidMount() {
+        Permissions.request('android.permission.ACCESS_FINE_LOCATION').then(response => {
+            // allow permissions please
+            // TODO check if permissions allowed or not
+
+        })
+
+        this.props.MapStore.getMarkersByUserId();
+    }
+
+    componentDidUpdate() {
+        this.props.MapStore.getMarkersByUserId();
+    }
 
     getCurrentPosition() {
         Geolocation.getCurrentPosition(
@@ -100,7 +113,7 @@ export class MapScreen extends Component {
                     {
                         this.props.MapStore.markers.map((marker) => {
                             return (
-                                <Marker                                    
+                                <Marker
                                     key={marker.id}
                                     coordinate={{
                                         latitude: marker.latlng.latitude,
