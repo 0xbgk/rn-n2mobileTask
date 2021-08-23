@@ -5,12 +5,13 @@ tages: [react native android javascript maps firebase]
 ---
 
 ```sh
-$ cd rn-n2mobileTask
+$ cd rn-n2mobileTask-main
 $ npm install
 $ npx react-native run-android
 ```
+# App Screenshots
 
-# Sign In - Sign Up
+### Sign In - Sign Up
 ![sign_in](https://i.imgur.com/2gmWYGs.png)
 ![sign_up](https://i.imgur.com/76JcLeW.png)
 
