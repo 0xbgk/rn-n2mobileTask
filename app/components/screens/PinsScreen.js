@@ -4,6 +4,8 @@ import { Text, View, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 import MarkerInfo from '../utils/MarkerInfo';
 import AppStyles from '../../styles/AppStyles'
 import { ScreenName } from '../../constants/Enums';
+import database from '@react-native-firebase/database';
+import FirebaseUtil from '../utils/FirebaseUtil'
 
 const {
     WINDOW_WIDTH,
@@ -19,14 +21,47 @@ export class PinsScreen extends Component {
 
     constructor(props) {
         super(props)
+        this.getCurrentMarkers = this.getCurrentMarkers.bind(this);
     }
 
     state = {
-        viewMarkers: false
+        markers: []
     }
 
     componentDidMount() {
-        this.props.MapStore.getMarkersByUserId();
+        // this.props.MapStore.getMarkersByUserId();
+
+        this.getCurrentMarkers()
+
+    }
+
+    componentDidUpdate() {
+        this.getCurrentMarkers()
+    }
+
+    getCurrentMarkers() {
+        let uid = FirebaseUtil.getCurrentUser().uid;
+        let temp = []
+
+        database()
+            .ref(`/users/${uid}/`)
+            .once('value')
+            .then(snapshot => {
+                snapshot.forEach((item) => {
+                    temp.push({
+                        id: item.val().id,
+                        latlng: {
+                            latitude: item.val().latlng.latitude,
+                            longitude: item.val().latlng.longitude
+                        },
+                        title: item.val().title
+                    })
+                })
+                this.setState({
+                    markers: [...temp]
+                })
+                // console.log(this.state.markers)
+            });
     }
 
     render() {
@@ -42,10 +77,10 @@ export class PinsScreen extends Component {
                 </View>
                 <ScrollView style={pinContainer}>
                     {
-                        this.state.viewMarkers ?
-                            this.props.MapStore.markers.map((marker) => {
+                        this.state.markers.length > 0 ?
+                            this.state.markers.map((marker) => {
                                 return (
-                                    <MarkerInfo key={marker.id} id={marker.id} title={marker.title} navigateToMarker={() => {
+                                    <MarkerInfo key={marker.id} icon="map-marker-alt" title={marker.title} navigateToMarker={() => {
 
                                         this.props.MapStore.setPin(marker.latlng)
 

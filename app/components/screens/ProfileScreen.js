@@ -51,10 +51,11 @@ export class ProfileScreen extends Component {
 
                 </EditProfileArea>
 
-                <ButtonArea buttonText="data" onPressFunction={() => {
+                
+                {/* <ButtonArea buttonText="data" onPressFunction={() => {
                     this.getData();
                     // this.props.navigation.navigate(ScreenName.LOGIN)
-                }} />
+                }} /> */}
 
                 <ButtonArea buttonText="LOGOUT" onPressFunction={() => {
                     this.signOut();

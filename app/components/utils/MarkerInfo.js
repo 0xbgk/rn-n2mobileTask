@@ -2,13 +2,16 @@ import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import AppStyles from '../../styles/AppStyles';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const {
     WINDOW_HEIGHT,
     WINDOW_WIDTH,
     BORDER_RADIUS,
-    GREEN_COLOR_FULL,
-    BUTTON_ORANGE_COLOR
+    BUTTON_RED_COLOR,
+    BUTTON_ORANGE_COLOR,
+    BUTTON_BLUE_COLOR,
+    HEADER_COLOR
 } = AppStyles
 
 @inject('MapStore')
@@ -30,7 +33,8 @@ export default class MarkerInfo extends Component {
                 style={markerContainer}
             >
                 <View style={markerLeft}>
-                    <Text style={textStyle}>{this.props.id}</Text>
+                    {/* <Text style={textStyle}>{this.props.id}</Text> */}
+                    <Icon name={this.props.icon} size={26} style={{}} color={BUTTON_RED_COLOR} />
                 </View>
                 <View style={{ flex: 0.5 }}></View>
                 <View style={markerRight}>
@@ -53,7 +57,7 @@ const styles = StyleSheet.create({
     markerLeft: {
         flex: 1,
         borderRadius: BORDER_RADIUS * 2,
-        backgroundColor: GREEN_COLOR_FULL,
+        backgroundColor: HEADER_COLOR,
         alignItems: 'center',
         alignContent: 'center',
         justifyContent: 'center',

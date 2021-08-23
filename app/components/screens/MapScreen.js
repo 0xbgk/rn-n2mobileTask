@@ -7,6 +7,8 @@ import MyLocationButton from '../utils/MyLocationButton';
 import SavePinArea from '../utils/SavePinArea';
 import Geolocation from 'react-native-geolocation-service';
 import Permissions from 'react-native-permissions';
+import FirebaseUtil from '../utils/FirebaseUtil'
+import database from '@react-native-firebase/database';
 
 @inject('MapStore')
 @observer
@@ -16,6 +18,7 @@ export class MapScreen extends Component {
         super(props);
         this.getCurrentPosition = this.getCurrentPosition.bind(this);
         this.onPressHandler = this.onPressHandler.bind(this);
+        this.getCurrentMarkers = this.getCurrentMarkers.bind(this);
         // console.log(props.MapStore)
     }
 
@@ -25,8 +28,11 @@ export class MapScreen extends Component {
             longitude: this.props.MapStore.region.longitude,
             latitudeDelta: CoordinateDelta.TOWN_LATITUDE,
             longitudeDelta: CoordinateDelta.TOWN_LONGTITUDE,
-        }
+        },
+        markers: []
     };
+
+
 
     componentDidMount() {
         Permissions.request('android.permission.ACCESS_FINE_LOCATION').then(response => {
@@ -35,11 +41,44 @@ export class MapScreen extends Component {
 
         })
 
-        this.props.MapStore.getMarkersByUserId();
+        // this.props.MapStore.getMarkersByUserId();
+
+
+        this.getCurrentMarkers();
+
     }
 
     componentDidUpdate() {
-        this.props.MapStore.getMarkersByUserId();
+        // this.props.MapStore.getMarkersByUserId();
+        // console.log(this.state.markers)
+        this.getCurrentMarkers();
+
+    }
+
+    getCurrentMarkers() {
+        let uid = FirebaseUtil.getCurrentUser().uid;
+        let temp = []
+
+        database()
+            .ref(`/users/${uid}/`)
+            .once('value')
+            .then(snapshot => {
+                snapshot.forEach((item) => {
+                    temp.push({
+                        id: item.val().id,
+                        latlng: {
+                            latitude: item.val().latlng.latitude,
+                            longitude: item.val().latlng.longitude
+                        },
+                        title: item.val().title
+                    })
+
+                })
+                this.setState({
+                    markers: [...temp]
+                })
+                // console.log(this.state.markers)
+            });
     }
 
     getCurrentPosition() {
@@ -111,7 +150,19 @@ export class MapScreen extends Component {
                     }
                     {/* // Daha önce kayıtlı markerların gösterimi */}
                     {
-                        this.props.MapStore.markers.map((marker) => {
+                        // this.props.MapStore.markers.map((marker) => {
+                        //     return (
+                        //         <Marker
+                        //             key={marker.id}
+                        //             coordinate={{
+                        //                 latitude: marker.latlng.latitude,
+                        //                 longitude: marker.latlng.longitude
+                        //             }}
+                        //             title={marker.title}
+                        //         />
+                        //     )
+                        // })
+                        this.state.markers.map((marker) => {
                             return (
                                 <Marker
                                     key={marker.id}
@@ -123,6 +174,7 @@ export class MapScreen extends Component {
                                 />
                             )
                         })
+
                     }
 
                 </MapView>
